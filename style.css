@@ -1,107 +1,196 @@
-.sidebar {
-    background-color: #f8f9fa;
-    padding: 20px;
-    height: 100vh;
-    border-right: 1px solid #dee2e6;
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
-.main-content {
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
+}
+
+.app-container {
+    width: 90%;
+    max-width: 1200px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
-#chat-container {
-    flex-grow: 1;
-    overflow-y: auto;
+.main-layout {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Sidebar */
+.sidebar-panel {
+    width: 280px;
+    background: #2c3e50;
+    color: #fff;
     padding: 20px;
-    background-color: #fff;
+}
+
+.sidebar-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.stats-container {
     margin-bottom: 20px;
 }
 
-.expense-message {
-    margin-bottom: 15px;
+.stat-item {
+    background: rgba(255, 255, 255, 0.1);
     padding: 10px;
-    border-radius: 10px;
-    background-color: #f8f9fa;
-    max-width: 80%;
+    margin-bottom: 10px;
+    border-radius: 5px;
 }
 
-.expense-message .amount {
-    font-size: 1.2em;
+.stat-period {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.stat-value {
+    font-size: 1.2rem;
     font-weight: bold;
 }
 
-.expense-message .tag {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 15px;
-    color: white;
-    margin-right: 10px;
+.charts-container {
+    margin-top: 20px;
 }
 
-.expense-message .timestamp {
-    font-size: 0.8em;
-    color: #6c757d;
+.chart-canvas {
+    width: 100%;
+    height: 150px;
+    margin-bottom: 10px;
+    background: #fff;
+    border-radius: 5px;
 }
 
-#tags-container {
-    padding: 10px;
-    border-top: 1px solid #dee2e6;
+/* Área de Conteúdo */
+.content-area {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.tag-button {
-    margin: 5px;
-    border: none;
-    padding: 5px 15px;
-    border-radius: 15px;
-    color: white;
-    cursor: pointer;
-}
-
-.tag-button.selected {
-    box-shadow: 0 0 0 2px #000;
-}
-
-.stat-card {
-    background-color: white;
+.chat-wrapper {
+    flex-grow: 1;
+    background: #eef1f5;
     padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.charts {
-    margin-top: 30px;
-}
-
-.charts canvas {
+    border-radius: 5px;
+    min-height: 200px;
     margin-bottom: 20px;
 }
 
-.expense-header {
+/* Tags */
+.tags-section {
+    background: #ecf0f1;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.tags-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
 }
 
-.expense-actions {
+.tags-list {
     display: flex;
-    gap: 5px;
+    gap: 10px;
 }
 
-.expense-actions button {
-    padding: 2px 8px;
-    font-size: 0.8em;
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #2c3e50;
 }
 
-.edit-btn:hover {
-    background-color: #007bff;
+.tags-editor {
+    margin-top: 10px;
+}
+
+.primary-button {
+    background: #3498db;
     color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-.delete-btn:hover {
-    background-color: #dc3545;
-    color: white;
+.primary-button:hover {
+    background: #2980b9;
+}
+
+/* Formulário de Entrada */
+.expense-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.currency-symbol {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.amount-input,
+.description-input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+}
+
+.amount-input {
+    max-width: 120px;
+}
+
+/* Modal de Tags */
+.tag-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+.modal-dialog {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column;
+    }
+    .sidebar-panel {
+        width: 100%;
+    }
 }

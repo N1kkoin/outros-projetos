@@ -20,6 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     http_response_code(201);
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $stmt = $db->prepare('UPDATE tags SET name = ?, color = ? WHERE id = ?');
+    $stmt->execute([$data['name'], $data['color'], $data['id']]);
+    http_response_code(200);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $id = $_GET['id'];
     $stmt = $db->prepare('DELETE FROM tags WHERE id = ?');
