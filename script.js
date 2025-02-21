@@ -326,5 +326,45 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.edit-tags-btn').onclick = toggleEditMode;
     document.querySelector('.add-tag-btn').onclick = createNewTag;
     document.getElementById('send-expense').onclick = sendExpense;
+
+    // Carregar as estatísticas
+    async function loadStats() {
+        const response = await fetch('api/stats.php');
+        const stats = await response.json();
+
+        // Preencher as estatísticas no sidebar
+        document.getElementById('today-total').textContent = `R$ ${stats.today.toFixed(2)}`;
+        document.getElementById('month-total').textContent = `R$ ${stats.month.toFixed(2)}`;
+        document.getElementById('year-total').textContent = `R$ ${stats.year.toFixed(2)}`;
+
+        updateCharts(stats);
+    }
+
+    // Atualizar os gráficos com os dados de stats
+    function updateCharts(stats) {
+        new Chart(document.getElementById('monthlyChart'), {
+            type: 'line',
+            data: {
+                labels: stats.monthly_labels,
+                datasets: [{
+                    label: 'Gastos por Dia',
+                    data: stats.monthly_data,
+                    borderColor: '#007bff'
+                }]
+            }
+        });
+
+        new Chart(document.getElementById('tagChart'), {
+            type: 'doughnut',
+            data: {
+                labels: stats.tags_labels,
+                datasets: [{
+                    data: stats.tags_data,
+                    backgroundColor: stats.tags_colors
+                }]
+            }
+        });
+    }
 });
+
 

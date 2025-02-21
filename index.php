@@ -12,31 +12,12 @@
 <body>
     <div class="app-container">
         <div class="main-layout">
-            <!-- Sidebar -->
-            <aside class="sidebar-panel">
-                <h3 class="sidebar-title">Resumo</h3>
-                <div class="stats-container">
-                    <div class="stat-item">
-                        <h5 class="stat-period">Hoje</h5>
-                        <span class="stat-value" id="today-total">R$ 0,00</span>
-                    </div>
-                    <div class="stat-item">
-                        <h5 class="stat-period">Este Mês</h5>
-                        <span class="stat-value" id="month-total">R$ 0,00</span>
-                    </div>
-                    <div class="stat-item">
-                        <h5 class="stat-period">Este Ano</h5>
-                        <span class="stat-value" id="year-total">R$ 0,00</span>
-                    </div>
-                </div>
-                <div class="charts-container">
-                    <canvas class="chart-canvas" id="monthlyChart"></canvas>
-                    <canvas class="chart-canvas" id="tagChart"></canvas>
-                </div>
-            </aside>
-
+           
             <!-- Conteúdo Principal -->
             <main class="content-area">
+            <button class="primary-button" onclick="window.location.href='statistics.php'">
+            <i class="fa-solid fa-chart-simple"></i>
+            </button>
                 <div class="chat-wrapper" id="chat-container">
                     <!-- Mensagens serão inseridas aqui -->
                 </div>
