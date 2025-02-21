@@ -29,6 +29,7 @@ body {
 .main-layout {
     display: flex;
     flex-direction: row;
+    
 }
 
 /* Sidebar */
@@ -37,6 +38,8 @@ body {
     background: rgb(235, 239, 247);
     color: rgb(97, 97, 97);
     padding: 20px;
+   
+    border-radius: 8px;
 }
 
 .sidebar-title {
@@ -81,10 +84,11 @@ body {
 .content-area {
     flex-grow: 1;
     padding: 10px;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 100dvh;
+
 }
 
 .chat-wrapper {
@@ -93,7 +97,15 @@ body {
     gap: 5px;
     flex-grow: 1;
     border-radius: 5px;
+    
 }
+
+#chat-container {
+    display: flex;
+    align-items: flex-start; /* Garante que os itens fiquem no topo */
+    overflow-y: auto; /* Permite rolagem */
+    }
+
 
 /* Tags */
 .tags-section {
@@ -232,6 +244,7 @@ body {
     border-radius: 5px;
     border: 1px solid #ccc;
     padding: 10px;
+    width: 100%;
 }
 
 .transaction-tag {
@@ -249,7 +262,7 @@ body {
 }
 
 .tagsemensagem {
-    background-color: #f4f4f4;
+    background-color: rgb(235, 239, 247);
     padding: 10px;
     border-radius: 8px;
 }
@@ -269,4 +282,26 @@ body {
 
 .danger-button {
     border: 1px solid #e74c3c;
+}
+
+.transaction-amount{
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.transaction-time{
+    font-style: italic;
+    color: #2980b9;
+    font-size: small;
+}
+
+
+.transaction-actions {
+    display: none; /* Oculta os botões inicialmente */
+}
+
+.transaction-message.active .transaction-actions {
+    display: flex; /* Exibe os botões quando a classe "active" é adicionada */
+    gap: 5px;
+    margin-top: 10px;
 }

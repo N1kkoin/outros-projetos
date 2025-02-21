@@ -19,7 +19,7 @@ let isEditingTags = false;
 function renderTags() {
     const container = document.querySelector('.tags-list');
     const editContainer = document.querySelector('.tags-edit-list');
-    
+
     // Modo normal
     container.innerHTML = '';
     tags.forEach(tag => {
@@ -84,7 +84,7 @@ function toggleEditMode() {
 async function updateTag(tag) {
     const response = await fetch('api/tags.php', {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(tag)
     });
     if (response.ok) await loadTags();
@@ -113,7 +113,7 @@ async function createNewTag() {
 
         const response = await fetch('api/tags.php', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 name: nameInput.value,
                 color: colorInput.value
@@ -126,21 +126,27 @@ async function createNewTag() {
 
 // Selecionar uma tag
 function selectTag(tagId) {
-    selectedTagId = selectedTagId === tagId ? null : tagId;
+    if (selectedTagId === tagId) {
+        selectedTagId = tagId;  // 🔥 Garante que não seja null
+    } else {
+        selectedTagId = tagId;
+    }
+    console.log("Tag selecionada:", selectedTagId); // 🔥 Verificar se está certo
     renderTags();
 }
+
 
 // Gerenciamento de despesas
 async function sendExpense() {
     const amount = document.getElementById('amount').value;
     const description = document.getElementById('description').value;
-    
+
     if (!amount || amount <= 0) return alert('Por favor, insira um valor válido');
     if (!selectedTagId) return alert('Por favor, selecione uma tag');
 
     const response = await fetch('api/expenses.php', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount, tag_id: selectedTagId, description })
     });
 
@@ -163,19 +169,22 @@ async function editExpense(expense) {
     document.getElementById('amount').value = expense.amount;
     document.getElementById('description').value = expense.description;
     selectTag(expense.tag_id);
-    
+
     const sendButton = document.getElementById('send-expense');
     sendButton.textContent = 'Atualizar';
     sendButton.onclick = async () => {
+        console.log("Tag selecionada antes do envio:", selectedTagId); // 🔥 Verificar se está certo
+
         const response = await fetch('api/expenses.php', {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 id: expense.id,
                 amount: document.getElementById('amount').value,
-                tag_id: selectedTagId,
+                tag_id: selectedTagId || 0,  // Se for null, envia 0
                 description: document.getElementById('description').value
             })
+            
         });
 
         if (response.ok) {
@@ -193,8 +202,8 @@ async function editExpense(expense) {
 
 async function deleteExpense(id) {
     if (!confirm('Tem certeza que deseja excluir esta despesa?')) return;
-    
-    const response = await fetch(`api/expenses.php?id=${id}`, {method: 'DELETE'});
+
+    const response = await fetch(`api/expenses.php?id=${id}`, { method: 'DELETE' });
     if (response.ok) {
         loadExpenses();
         updateStats();
@@ -204,7 +213,7 @@ async function deleteExpense(id) {
 function renderExpenses(expenses) {
     const container = document.getElementById('chat-container');
     container.innerHTML = '';
-    
+
     expenses.forEach(expense => {
         const tag = tags.find(t => t.id === expense.tag_id);
         const message = document.createElement('div');
@@ -227,28 +236,57 @@ function renderExpenses(expenses) {
                 </div>
         `;
 
-        message.querySelector('.edit-button').onclick = () => editExpense(expense);
-        message.querySelector('.danger-button').onclick = () => deleteExpense(expense.id);
-        container.appendChild(message);
+        // Evento para mostrar/ocultar botões ao clicar
+        message.addEventListener('click', () => {
+            document.querySelectorAll('.transaction-message').forEach(msg => {
+                if (msg !== message) msg.classList.remove('active');
+            });
+            message.classList.toggle('active');
+        });
+
+        message.querySelector('.edit-button').onclick = (e) => {
+            e.stopPropagation(); // Evita fechar os botões ao clicar
+            editExpense(expense);
+        };
+
+        message.querySelector('.danger-button').onclick = (e) => {
+            e.stopPropagation(); // Evita fechar os botões ao clicar
+            deleteExpense(expense.id);
+        };
+
+        container.prepend(message); // Adiciona no topo
+
     });
-    
-    container.scrollTop = container.scrollHeight;
+
+    container.scrollTop = container.scrollHeight; // Mantém o scroll no final
 }
 
 // Estatísticas e gráficos
 async function updateStats() {
     const response = await fetch('api/stats.php');
     const stats = await response.json();
-    
+
     document.getElementById('today-total').textContent = `R$ ${stats.today.toFixed(2)}`;
     document.getElementById('month-total').textContent = `R$ ${stats.month.toFixed(2)}`;
     document.getElementById('year-total').textContent = `R$ ${stats.year.toFixed(2)}`;
-    
+
     updateCharts(stats);
 }
 
+let monthlyChartInstance = null;
+let tagChartInstance = null;
+
 function updateCharts(stats) {
-    new Chart(document.getElementById('monthlyChart'), {
+    // Se os gráficos já existem, destrua-os antes de recriar
+    if (monthlyChartInstance) {
+        monthlyChartInstance.destroy();
+    }
+    if (tagChartInstance) {
+        tagChartInstance.destroy();
+    }
+
+    // Criar novo gráfico de gastos por dia
+    monthlyChartInstance = new Chart(document.getElementById('monthlyChart'), {
         type: 'line',
         data: {
             labels: stats.monthly_labels,
@@ -260,7 +298,8 @@ function updateCharts(stats) {
         }
     });
 
-    new Chart(document.getElementById('tagChart'), {
+    // Criar novo gráfico de tags
+    tagChartInstance = new Chart(document.getElementById('tagChart'), {
         type: 'doughnut',
         data: {
             labels: stats.tags_labels,
@@ -272,8 +311,9 @@ function updateCharts(stats) {
     });
 }
 
+
 async function deleteTag(id) {
-    const response = await fetch(`api/tags.php?id=${id}`, {method: 'DELETE'});
+    const response = await fetch(`api/tags.php?id=${id}`, { method: 'DELETE' });
     if (response.ok) await loadTags();
 }
 
@@ -287,3 +327,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.add-tag-btn').onclick = createNewTag;
     document.getElementById('send-expense').onclick = sendExpense;
 });
+
