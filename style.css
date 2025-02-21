@@ -60,7 +60,8 @@ body {
     background: white;
     padding: 10px;
     border-radius: 5px;
-    min-width: 200px;
+    max-width: 200px;
+    width: 100%;
 }
 
 .stat-period {
@@ -186,11 +187,31 @@ body {
 .amount-input,
 .description-input {
     padding: 10px;
-    border: none;
+    
     border-radius: 5px;
     border: 1px solid #ccc;
-    
 }
+
+input[type=text]{
+    padding: 10px;
+   
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+input[type="color"] {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    height: 20px;
+    padding: 0;
+    width: 50px;
+    border-radius: 5px;
+  }
+
 .amount-input{
     flex: 1;
 }
@@ -319,4 +340,10 @@ body {
     flex-direction: column;
     width: 100%;
     gap: 10px;
+}
+
+.tags-edit-list{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
