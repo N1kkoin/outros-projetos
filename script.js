@@ -212,7 +212,11 @@ function renderExpenses(expenses) {
             <div class="transaction-header">
                 <span class="transaction-tag" style="background-color: ${tag.color}">${tag.name}</span>
                 <span class="transaction-amount">R$ ${parseFloat(expense.amount).toFixed(2)}</span>
-                <div class="transaction-actions">
+               
+            </div>
+            ${expense.description ? `<p>${expense.description}</p>` : ''}
+            <div class="transaction-time">${new Date(expense.created_at).toLocaleString()}</div>
+             <div class="transaction-actions">
                     <button class="edit-button">
                         <i class="fas fa-edit"></i>
                     </button>
@@ -220,9 +224,6 @@ function renderExpenses(expenses) {
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
-            </div>
-            ${expense.description ? `<p>${expense.description}</p>` : ''}
-            <div class="transaction-time">${new Date(expense.created_at).toLocaleString()}</div>
         `;
 
         message.querySelector('.edit-button').onclick = () => editExpense(expense);
