@@ -194,23 +194,15 @@ body {
 
 input[type=text]{
     padding: 10px;
-   
     border-radius: 5px;
     border: 1px solid #ccc;
 }
+.color-picker {
+    box-shadow: none !important; /* Remove qualquer sombra */
+    border: none !important; /* Remove a borda */
+    outline: none; /* Remove a borda de foco */
+}
 
-input[type="color"] {
-    appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    background: none;
-    border: 0;
-    cursor: pointer;
-    height: 20px;
-    padding: 0;
-    width: 50px;
-    border-radius: 5px;
-  }
 
 .amount-input{
     flex: 1;
@@ -345,5 +337,17 @@ input[type="color"] {
 .tags-edit-list{
     display: flex;
     flex-direction: column;
+    gap: 10px;
+}
+
+.tag-editor-item{
+    display: flex;
     gap: 5px;
+}
+
+.add-tag-btn{
+    border: 1px solid #12a04d;
+    color: #12a04d;
+    margin-bottom: 10px;
+    background-color: white;
 }

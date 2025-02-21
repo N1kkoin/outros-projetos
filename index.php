@@ -7,6 +7,8 @@
     <title>FinançaMeuBolso</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@melloware/coloris/dist/coloris.min.css">
+
 </head>
 
 <body>
@@ -33,10 +35,11 @@
                             </div>
                         </div>
                         <div class="tags-editor" style="display: none;">
-                            <div class="tags-edit-list"></div>
-                            <button class="primary-button add-tag-btn">
-                                <i class="fas fa-plus"></i> Nova Tag
+                        <button class="primary-button add-tag-btn">
+                                <i class="fas fa-plus"></i> 
                             </button>
+                            <div class="tags-edit-list"></div>
+                           
                         </div>
                     </div>
 
@@ -70,6 +73,8 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@melloware/coloris/dist/coloris.min.js"></script>
+
     <script src="script.js"></script>
 </body>
 

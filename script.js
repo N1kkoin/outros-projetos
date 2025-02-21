@@ -38,7 +38,7 @@ function renderTags() {
         const tagItem = document.createElement('div');
         tagItem.className = 'tag-editor-item';
         tagItem.innerHTML = `
-            <input type="color" class="color-picker" value="${tag.color}">
+            <input type="text" class="color-picker" data-coloris value="${tag.color}" style="background-color: ${tag.color}; color: #fff; text-align: center;">
             <input type="text" class="tag-name" value="${tag.name}">
             <div class="tag-actions">
                 <button class="primary-button save-tag-btn">
@@ -184,7 +184,7 @@ async function editExpense(expense) {
                 tag_id: selectedTagId || 0,  // Se for null, envia 0
                 description: document.getElementById('description').value
             })
-            
+
         });
 
         if (response.ok) {
@@ -365,6 +365,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+  // Delegação de evento para inputs color-picker
+  document.addEventListener("coloris:pick", (event) => {
+    const input = event.target;
+    const newColor = event.detail.color;
+    input.style.backgroundColor = newColor;
+    input.style.color = getTextColor(newColor);
 });
 
+document.addEventListener("input", (event) => {
+    if (event.target.classList.contains("color-picker")) {
+        const input = event.target;
+        input.style.backgroundColor = input.value;
+        input.style.color = getTextColor(input.value);
+    }
+});
+});
 
+// Função para definir cor do texto (preto ou branco) dependendo do fundo
+function getTextColor(bgColor) {
+const r = parseInt(bgColor.substring(1, 3), 16);
+const g = parseInt(bgColor.substring(3, 5), 16);
+const b = parseInt(bgColor.substring(5, 7), 16);
+return (r * 0.299 + g * 0.587 + b * 0.114) > 186 ? "#000" : "#fff";
+}
+
+Coloris({
+    theme: 'polaroid',
+    themeMode: 'light', // ou 'light'
+    format: 'hex',
+    margin: 2,
+    alpha: false
+});
