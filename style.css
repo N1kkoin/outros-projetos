@@ -33,7 +33,7 @@ body {
 
 /* Sidebar */
 .sidebar-panel {
-    width: 280px;
+    width: 400px;
     background: rgb(235, 239, 247);
     color: rgb(97, 97, 97);
     padding: 20px;
@@ -105,13 +105,19 @@ body {
 
 .tags-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 10px;
+
 }
 
 .tags-list {
     display: flex;
     gap: 10px;
+}
+
+.tags-list-container{
+    box-sizing: border-box;
+    overflow-x: scroll;
 }
 
 .icon-button {
@@ -133,6 +139,7 @@ body {
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s;
+   
 }
 
 .primary-button:hover {
@@ -144,6 +151,12 @@ body {
     display: flex;
     gap: 10px;
     align-items: center;
+    flex-wrap: wrap;
+}
+
+.selected{
+    background-color: white !important;
+    color: black !important;
 }
 
 .currency-symbol {
@@ -154,13 +167,15 @@ body {
 .amount-input,
 .description-input {
     padding: 10px;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 5px;
+    
+}
+.amount-input{
     flex: 1;
 }
-
-.amount-input {
-    max-width: 120px;
+.description-input{
+    flex: 3;
 }
 
 /* Modal de Tags */
@@ -208,6 +223,9 @@ body {
 
 .tag-item {
     cursor: pointer;
+    flex: 1;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+
 }
 
 .transaction-message {
@@ -223,7 +241,7 @@ body {
 .edit-tags-btn {
     border: 1px solid #3498db;
     color: #3498db;
-    padding: 10px;
+    padding: 7px 10px;
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s;

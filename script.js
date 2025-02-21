@@ -26,6 +26,7 @@ function renderTags() {
         const button = document.createElement('button');
         button.className = `tag-item ${tag.id === selectedTagId ? 'selected' : ''}`;
         button.style.backgroundColor = tag.color;
+        button.style.borderColor = tag.color; // Define a borda com a mesma cor
         button.textContent = tag.name;
         button.onclick = () => selectTag(tag.id);
         container.appendChild(button);

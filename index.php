@@ -44,10 +44,12 @@
                     <!-- Seção de Tags -->
                     <div class="tags-section" id="tags-container">
                         <div class="tags-header">
-                            <div class="tags-list"></div>
                             <button class="icon-button edit-tags-btn">
                                 <i class="fas fa-cog"></i>
                             </button>
+                            <div class="tags-list-container">
+                                <div class="tags-list"></div>
+                            </div>
                         </div>
                         <div class="tags-editor" style="display: none;">
                             <div class="tags-edit-list"></div>
