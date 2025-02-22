@@ -1,10 +1,16 @@
 <?php
+$host = 'localhost';  // ou o IP do seu servidor de banco de dados
+$dbname = 'expense_tracker';  // substitua pelo nome do seu banco de dados
+$username = 'root';  // substitua pelo nome do seu usuário
+$password = '';  // substitua pela senha do seu usuário
+
 try {
-    $db = new PDO('mysql:host=localhost;dbname=expense_tracker', 'root', '');
+    $db = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die('Conexão falhou: ' . $e->getMessage());
+    echo 'Erro de conexão: ' . $e->getMessage();
 }
+
 
 
 /*
@@ -33,5 +39,14 @@ INSERT INTO tags (name, color) VALUES
 ('Lazer', '#17a2b8'),
 ('Contas', '#dc3545'),
 ('Saúde', '#ffc107');
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255),   -- Adicionando o campo para a senha
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    verification_code INT NOT NULL
+);
+
 
 */
