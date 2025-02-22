@@ -14,7 +14,7 @@
         <div class="main-layout">
             <!-- Sidebar -->
             <aside class="sidebar-panel">
-            <button class="primary-button" onclick="window.location.href='index.php'">
+            <button class="primary-button" onclick="window.location.href='dashboard.php'">
             <i class="fa-solid fa-house"></i>
             </button>
                 <h3 class="sidebar-title">Resumo</h3>

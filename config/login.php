@@ -1,4 +1,5 @@
 <?php
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_email']) && isset($_POST['login_password'])) {
     try {
         $login_email = filter_var($_POST['login_email'], FILTER_VALIDATE_EMAIL);
@@ -24,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_email']) && iss
         // Iniciar sessão e armazenar login do usuário
         $_SESSION['user_logged_in'] = true;
         $_SESSION['user_email'] = $login_email;
+        $_SESSION['user_id'] = $user['id']; // Aqui estamos armazenando o user_id na sessão
 
         // Redirecionar para o dashboard ou página principal
         header("Location: dashboard.php");
@@ -32,3 +34,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_email']) && iss
         $error_message = $e->getMessage();
     }
 }
+?>
