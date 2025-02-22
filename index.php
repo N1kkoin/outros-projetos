@@ -4,10 +4,10 @@ require_once 'config.php';
 require_once 'config/email.php';
 require_once 'config/delete_olduser.php';
 
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // Desabilitar exibição de erros para evitar poluir o JSON
+require 'config/register.php';
+require 'config/login.php';
 
-ob_start();
+$error_message = '';
 
 // Verificação AJAX do código
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'verify_code') {
@@ -34,9 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit();
 }
 
-$message = '';
-
-// Processamento do envio de email
+// Processamento do envio de e-mail e verificação do e-mail no banco
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     try {
         $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
@@ -44,31 +42,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
             throw new Exception('E-mail inválido');
         }
 
-        $verification_code = rand(100000, 999999);
-        $_SESSION['verification_code'] = $verification_code;
-        $_SESSION['email'] = $email;
-
-        // Primeiro, verificar se o email já existe
+        // Verificar se o email já existe
         $stmt = $db->prepare('SELECT id FROM users WHERE email = ?');
         $stmt->execute([$email]);
 
         if ($stmt->rowCount() > 0) {
-            // Email existe - apenas atualizar o código
-            $stmt = $db->prepare('UPDATE users SET verification_code = ? WHERE email = ?');
-            $stmt->execute([$verification_code, $email]);
-        } else {
-            // Email não existe - inserir novo registro
-            $stmt = $db->prepare('INSERT INTO users (email, verification_code) VALUES (?, ?)');
-            $stmt->execute([$email, $verification_code]);
+            // O e-mail já está cadastrado, informando ao usuário
+            $error_message = 'Este e-mail já está cadastrado. Faça login em vez de criar uma nova conta.';
+            throw new Exception($error_message);
         }
 
+        $verification_code = rand(100000, 999999);
+        $_SESSION['verification_code'] = $verification_code;
+        $_SESSION['email'] = $email;
+
+        // Enviar o código de verificação
         if (sendVerificationEmail($email, $verification_code)) {
-            $message = 'Código enviado para o seu e-mail.';
+            $_SESSION['email_step'] = 2; // Passar para a próxima etapa
+            $error_message = 'Código enviado para o seu e-mail.';
         } else {
             throw new Exception('Falha ao enviar o código. Tente novamente.');
         }
     } catch (Exception $e) {
-        $message = $e->getMessage();
+        $error_message = $e->getMessage();
     }
 }
 
@@ -80,8 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password']) && isset(
         }
 
         $password_hash = password_hash($_POST['password'], PASSWORD_BCRYPT);
-        $stmt = $db->prepare('UPDATE users SET password = ? WHERE email = ?');
-        $stmt->execute([$password_hash, $_SESSION['email']]);
+
+        // Inserir no banco de dados
+        $stmt = $db->prepare('INSERT INTO users (email, password) VALUES (?, ?)');
+        $stmt->execute([$_SESSION['email'], $password_hash]);
 
         // Iniciar sessão e armazenar login do usuário
         $_SESSION['user_logged_in'] = true;
@@ -91,103 +89,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password']) && isset(
         header("Location: dashboard.php");
         exit();
     } catch (Exception $e) {
-        $message = $e->getMessage();
+        $error_message = $e->getMessage();
     }
 }
 
-
-// Processar login
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_email'], $_POST['login_password'])) {
-    try {
-        $email = filter_var($_POST['login_email'], FILTER_VALIDATE_EMAIL);
-        $password = $_POST['login_password'];
-
-        if (!$email || empty($password)) {
-            throw new Exception('E-mail ou senha inválidos.');
-        }
-
-        // Verificar usuário no banco de dados
-        $stmt = $db->prepare('SELECT id, password FROM users WHERE email = ?');
-        $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$user || !password_verify($password, $user['password'])) {
-            throw new Exception('E-mail ou senha incorretos.');
-        }
-
-        // Criar sessão
-        $_SESSION['user_logged_in'] = true;
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_email'] = $email;
-
-        // Redirecionar para o painel
-        header('Location: dashboard.php');
-        exit();
-    } catch (Exception $e) {
-        $message = $e->getMessage();
-    }
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta</title>
-    <style>
-        .field-group {
-            margin-bottom: 15px;
-        }
-
-        .message {
-            margin: 10px 0;
-        }
-
-        .message.error {
-            color: #e74c3c;
-        }
-
-        .message.success {
-            color: #2ecc71;
-        }
-
-        .disabled {
-            background-color: #eee;
-        }
-
-        .verification-status {
-            display: none;
-            margin-left: 10px;
-            font-size: 14px;
-        }
-
-        .verification-status.success {
-            color: #2ecc71;
-            display: inline;
-        }
-
-        .verification-status.error {
-            color: #e74c3c;
-            display: inline;
-        }
-
-        #debug {
-            background: #f5f5f5;
-            padding: 10px;
-            margin: 10px 0;
-            font-family: monospace;
-            display: none;
-        }
-    </style>
+   
 </head>
-
 <body>
     <h2>Login</h2>
 
-    <?php if ($message): ?>
-        <div class="message"><?php echo htmlspecialchars($message); ?></div>
+    <?php if ($error_message): ?>
+        <div class="message"><?php echo htmlspecialchars($error_message); ?></div>
     <?php endif; ?>
 
     <form method="POST">
@@ -203,14 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_email'], $_POST
     <hr>
     <h2>Criar Conta</h2>
 
-    <?php if ($message): ?>
-        <div class="message"><?php echo htmlspecialchars($message); ?></div>
-    <?php endif; ?>
-
-    <div id="debug">
-        <strong>Debug Info:</strong>
-        <pre id="debugInfo"></pre>
-    </div>
 
     <form method="POST" id="registrationForm">
         <div class="field-group">
@@ -243,6 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_email'], $_POST
         <button type="submit" id="createAccountBtn" disabled>Criar Conta</button>
     </form>
 
+    
     <script>
         document.getElementById('code').addEventListener('input', function(e) {
             const code = e.target.value;
@@ -302,5 +215,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_email'], $_POST
         });
     </script>
 </body>
-
 </html>

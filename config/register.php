@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once './config.php';
-require_once 'email.php'; // Inclua o arquivo que contém a função de envio de e-mail
 
 // Definir 'email_step' se ainda não estiver definido
 if (!isset($_SESSION['email_step'])) {
@@ -15,6 +12,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$email) {
             echo 'E-mail inválido';
+            exit;
+        }
+
+        // **Verificar se o e-mail já existe no banco**
+        $stmt = $db->prepare('SELECT id FROM users WHERE email = ?');
+        $stmt->execute([$email]);
+
+        if ($stmt->rowCount() > 0) {
+            echo 'Este e-mail já está cadastrado. Faça login em vez de criar uma nova conta.';
             exit;
         }
 
@@ -69,4 +75,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_destroy(); // Limpar sessão
     }
 }
-?>
