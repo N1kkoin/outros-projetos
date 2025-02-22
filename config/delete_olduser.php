@@ -5,5 +5,5 @@ require_once 'config.php';
 $stmt = $db->prepare('DELETE FROM users WHERE password IS NULL AND created_at < NOW() - INTERVAL 1 DAY');
 $stmt->execute();
 
-echo "Usuários não registrados há mais de 24 horas foram removidos.";
+// echo "Usuários não registrados há mais de 24 horas foram removidos.";
 ?>

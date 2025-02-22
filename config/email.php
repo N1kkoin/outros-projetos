@@ -23,8 +23,8 @@ function sendVerificationEmail($toEmail, $code)
         $mail->Port = 465;
 
         // Configurações de debug
-        $mail->SMTPDebug = 2;
-        $mail->Debugoutput = 'html';
+        $mail->SMTPDebug = 0;
+
 
         // Configurações do email
         $mail->setFrom($my_email, 'Nikkoin Design');
