@@ -3,13 +3,13 @@ session_start();
 require_once 'config/delete_olduser.php';
 
 // Verificar se o usuário está autenticado
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
     header('Location: index.php'); // Redireciona para o login se não estiver autenticado
     exit;
 }
 
 // Informações do usuário
-$user_email = $_SESSION['email'];
+$user_email = isset($_SESSION['user_email']) ? $_SESSION['user_email'] : 'Usuário';
 ?>
 
 <!DOCTYPE html>

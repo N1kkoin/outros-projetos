@@ -82,8 +82,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password']) && isset(
         $password_hash = password_hash($_POST['password'], PASSWORD_BCRYPT);
         $stmt = $db->prepare('UPDATE users SET password = ? WHERE email = ?');
         $stmt->execute([$password_hash, $_SESSION['email']]);
-        $message = 'Conta criada com sucesso!';
-        session_destroy();
+
+        // Iniciar sessão e armazenar login do usuário
+        $_SESSION['user_logged_in'] = true;
+        $_SESSION['user_email'] = $_SESSION['email'];
+
+        // Redirecionar para o dashboard
+        header("Location: dashboard.php");
+        exit();
     } catch (Exception $e) {
         $message = $e->getMessage();
     }
