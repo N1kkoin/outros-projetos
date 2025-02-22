@@ -94,6 +94,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password']) && isset(
         $message = $e->getMessage();
     }
 }
+
+
+// Processar login
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_email'], $_POST['login_password'])) {
+    try {
+        $email = filter_var($_POST['login_email'], FILTER_VALIDATE_EMAIL);
+        $password = $_POST['login_password'];
+
+        if (!$email || empty($password)) {
+            throw new Exception('E-mail ou senha inválidos.');
+        }
+
+        // Verificar usuário no banco de dados
+        $stmt = $db->prepare('SELECT id, password FROM users WHERE email = ?');
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user || !password_verify($password, $user['password'])) {
+            throw new Exception('E-mail ou senha incorretos.');
+        }
+
+        // Criar sessão
+        $_SESSION['user_logged_in'] = true;
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_email'] = $email;
+
+        // Redirecionar para o painel
+        header('Location: dashboard.php');
+        exit();
+    } catch (Exception $e) {
+        $message = $e->getMessage();
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -151,6 +184,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password']) && isset(
 </head>
 
 <body>
+    <h2>Login</h2>
+
+    <?php if ($message): ?>
+        <div class="message"><?php echo htmlspecialchars($message); ?></div>
+    <?php endif; ?>
+
+    <form method="POST">
+        <label for="login_email">E-mail:</label>
+        <input type="email" name="login_email" id="login_email" required>
+
+        <label for="login_password">Senha:</label>
+        <input type="password" name="login_password" id="login_password" required>
+
+        <button type="submit">Entrar</button>
+    </form>
+
+    <hr>
     <h2>Criar Conta</h2>
 
     <?php if ($message): ?>
